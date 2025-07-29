@@ -26,6 +26,8 @@ def report(sensor_reader):
     if readings['temperature_in_c'] > 25:
         if 20 <= readings['precipitation'] < 60:
             weather = "Partly Cloudy"
+        elif readings['precipitation'] >= 60:
+            weather = "Rainy"
         elif readings['wind_speed_kmph'] > 50:
             weather = "Alert, Stormy with heavy rain"
     return weather
@@ -35,15 +37,14 @@ def report(sensor_reader):
 def test_rainy():
     weather = report(sensor_stub)
     print(weather)
-    assert("rain" in weather)
+    assert("rain" in weather.lower())
 
 
 # Test for high precipitation, low wind speed
 def test_high_precipitation():
     weather = report(sensor_stub_high_precip_low_wind)
     print(weather)
-    # Should predict rain, but currently does not
-    assert("rain" in weather or "Rain" in weather)
+    assert("rain" in weather.lower())
 
 
 if __name__ == '__main__':
