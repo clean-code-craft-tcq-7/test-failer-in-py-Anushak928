@@ -1,44 +1,53 @@
-
-
-def sensorStub():
+# Stub for normal sensor values
+def sensor_stub():
     return {
-        'temperatureInC': 50,
+        'temperature_in_c': 50,
         'precipitation': 70,
         'humidity': 26,
-        'windSpeedKMPH': 52
+        'wind_speed_kmph': 52
     }
 
 
-def report(sensorReader):
-    readings = sensorReader()
+# Stub to expose bug: high precipitation, low wind speed
+def sensor_stub_high_precip_low_wind():
+    return {
+        'temperature_in_c': 30,
+        'precipitation': 70,  # High precipitation (>60)
+        'humidity': 40,
+        'wind_speed_kmph': 40   # Low wind speed (<50)
+    }
+
+
+# Weather report logic
+def report(sensor_reader):
+    readings = sensor_reader()
     weather = "Sunny Day"
 
-    if (readings['temperatureInC'] > 25):
-        if readings['precipitation'] >= 20 and readings['precipitation'] < 60:
+    if readings['temperature_in_c'] > 25:
+        if 20 <= readings['precipitation'] < 60:
             weather = "Partly Cloudy"
-        elif readings['windSpeedKMPH'] > 50:
+        elif readings['precipitation'] >= 60:
+            weather = "Rainy"
+        elif readings['wind_speed_kmph'] > 50:
             weather = "Alert, Stormy with heavy rain"
     return weather
 
 
-def testRainy():
-    weather = report(sensorStub)
+# Test for stormy/rainy weather
+def test_rainy():
+    weather = report(sensor_stub)
     print(weather)
-    assert("rain" in weather)
+    assert("rain" in weather.lower())
 
 
-def testHighPrecipitation():
-    # This instance of stub needs to be different-
-    # to give high precipitation (>60) and low wind-speed (<50)
-
-    weather = report(sensorStub)
-
-    # strengthen the assert to expose the bug
-    # (function returns Sunny day, it should predict rain)
-    assert(len(weather) > 0);
+# Test for high precipitation, low wind speed
+def test_high_precipitation():
+    weather = report(sensor_stub_high_precip_low_wind)
+    print(weather)
+    assert("rain" in weather.lower())
 
 
 if __name__ == '__main__':
-    testRainy()
-    testHighPrecipitation()
-    print("All is well (maybe!)");
+    test_rainy()
+    test_high_precipitation()
+    print("All is well (maybe!)")
